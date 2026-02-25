@@ -242,7 +242,7 @@ const Predefinicoes = () => {
   const categories = Object.keys(groupedConfigs);
 
   return (
-    <div className="space-y-4 relative z-10 px-1 sm:px-0 max-w-4xl mx-auto">
+    <div className="space-y-4 relative z-10">
       {/* Header */}
       <Card>
         <CardHeader className="p-3 sm:p-6">
