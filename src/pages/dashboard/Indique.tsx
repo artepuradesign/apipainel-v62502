@@ -21,7 +21,7 @@ const Indique = () => {
     referral_system_enabled: true,
     referral_bonus_enabled: true,
     referral_commission_enabled: false,
-    referral_bonus_amount: 5.0,
+    referral_bonus_amount: 0,
     referral_commission_percentage: 0
   });
   const [isLoading, setIsLoading] = useState(true);

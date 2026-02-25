@@ -55,10 +55,31 @@ class BonusConfigService {
     } catch (error) {
       console.error('❌ [BONUS_CONFIG] Erro geral:', error);
       
-      // Fallback para valor padrão em caso de erro
-      const fallbackValue = 5.0;
-      console.warn('⚠️ [BONUS_CONFIG] Usando valor fallback:', fallbackValue);
-      return fallbackValue;
+      // Tentar novamente uma vez antes de falhar
+      try {
+        console.warn('⚠️ [BONUS_CONFIG] Tentando novamente...');
+        const retryResult = await makeDirectRequest('/get-bonus-amount.php', {}, 'GET');
+        if (retryResult && retryResult.success && retryResult.data) {
+          const bonusAmount = retryResult.data.referral_bonus_amount;
+          this.bonusCache = {
+            referral_bonus_amount: bonusAmount,
+            welcome_bonus_amount: bonusAmount
+          };
+          this.lastFetch = Date.now();
+          console.log('✅ [BONUS_CONFIG] Valor obtido no retry:', bonusAmount);
+          return bonusAmount;
+        }
+      } catch (retryError) {
+        console.error('❌ [BONUS_CONFIG] Retry também falhou:', retryError);
+      }
+      
+      // Se o cache existir, usar o último valor conhecido
+      if (this.bonusCache) {
+        console.warn('⚠️ [BONUS_CONFIG] Usando último valor do cache:', this.bonusCache.referral_bonus_amount);
+        return this.bonusCache.referral_bonus_amount;
+      }
+      
+      throw new Error('Não foi possível obter o valor do bônus da API');
     }
   }
 
@@ -91,12 +112,12 @@ class BonusConfigService {
         return parseFloat(result.bonus);
       }
       
-      // Fallback
-      console.warn('⚠️ [BONUS_CONFIG] Usando valor fallback 5.0');
-      return 5.0;
+      // Fallback - não usar valor hardcoded
+      console.error('⚠️ [BONUS_CONFIG] Não foi possível fazer parse do resultado');
+      throw new Error('Formato de resposta inválido do bonus.php');
     } catch (error) {
       console.error('❌ [BONUS_CONFIG] Erro ao fazer parse do resultado PHP:', error);
-      return 5.0;
+      throw error;
     }
   }
 
@@ -128,7 +149,7 @@ export const bonusConfigService = BonusConfigService.getInstance();
 import { useState, useEffect } from 'react';
 
 export const useBonusConfig = () => {
-  const [bonusAmount, setBonusAmount] = useState<number>(5.0);
+  const [bonusAmount, setBonusAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
