@@ -14,7 +14,7 @@ const ReferralCode: React.FC<ReferralCodeProps> = ({
   codigoIndicacao
 }) => {
   const [copied, setCopied] = useState(false);
-  const { bonusAmount } = useBonusConfig();
+  const { bonusAmount, isLoading } = useBonusConfig();
 
   if (!codigoIndicacao) return null;
 
@@ -53,7 +53,9 @@ const ReferralCode: React.FC<ReferralCodeProps> = ({
         <div className="flex-1">
           <p className="text-sm text-gray-600 dark:text-gray-400">Seu Código de Indicação</p>
           <p className="font-bold text-xl text-brand-purple">{codigoIndicacao}</p>
-          <p className="text-xs text-gray-500">Compartilhe e ganhem R$ {bonusAmount.toFixed(2)} cada um!</p>
+          <p className="text-xs text-gray-500">
+            {isLoading ? 'Carregando valor...' : `Compartilhe e ganhem R$ ${bonusAmount.toFixed(2)} cada um!`}
+          </p>
         </div>
       </div>
 

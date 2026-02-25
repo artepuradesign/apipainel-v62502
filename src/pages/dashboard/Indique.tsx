@@ -362,7 +362,7 @@ const Indique = () => {
                 <span className="text-2xl">🎁</span>
                 <div>
                   <p className="text-sm font-semibold text-purple-900 dark:text-purple-100">
-                    Ganhe {formatCurrency(config.referral_bonus_amount)} por indicação!
+                    {isLoading ? 'Carregando...' : `Ganhe ${formatCurrency(config.referral_bonus_amount)} por indicação!`}
                   </p>
                   <p className="text-xs text-purple-700 dark:text-purple-300">
                     Cada vez que alguém usa seu código
