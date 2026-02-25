@@ -7,6 +7,7 @@ import { Eye, EyeOff, Lock, User, Mail, Gift } from "lucide-react";
 import { toast } from 'sonner';
 import { makeDirectRequest } from '@/config/apiConfig';
 import { externalReferralApiService } from '@/services/externalReferralApiService';
+import { useBonusConfig } from '@/services/bonusConfigService';
 
 interface RegistrationFormProps {
   name: string;
@@ -42,6 +43,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [hasVerified, setHasVerified] = useState(false);
+  const { bonusAmount } = useBonusConfig();
 
   const validateReferralCode = async () => {
     if (!referralId.trim()) {
@@ -230,7 +232,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
           }`}>
             {referralValidation.isValid 
-              ? `✅ Código válido! Indicado por: ${referralValidation.referrerName || 'Usuário Indicador'}`
+              ? `✅ Código válido! Indicado por: ${referralValidation.referrerName || 'Usuário Indicador'} — Bônus: ${bonusAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
               : referralValidation.isExpired
                 ? '⏰ Código expirado'
               : `❌ ${referralValidation.message || 'Código inválido'}`
