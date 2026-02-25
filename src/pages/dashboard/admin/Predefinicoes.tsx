@@ -4,8 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Settings, Save, Loader2, Globe, MessageCircle, Shield, DollarSign, Users, RefreshCw, ArrowLeft, Instagram, Send, Music, Phone } from 'lucide-react';
@@ -307,46 +305,26 @@ const Predefinicoes = () => {
         </Card>
       )}
 
-      {/* Content */}
+      {/* Content - all categories as cards */}
       {!loading && !error && categories.length > 0 && (
         <>
-          <Tabs defaultValue={categories[0]} className="w-full">
-            <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1 rounded-lg w-full justify-start">
-              {categories.map((cat) => {
-                const info = CATEGORY_LABELS[cat] || { label: cat, icon: <Settings className="h-4 w-4" /> };
-                return (
-                  <TabsTrigger
-                    key={cat}
-                    value={cat}
-                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
-                  >
+          {categories.map((cat) => {
+            const info = CATEGORY_LABELS[cat] || { label: cat, icon: <Settings className="h-4 w-4" /> };
+            const catConfigs = groupedConfigs[cat];
+            return (
+              <Card key={cat}>
+                <CardHeader className="px-4 py-3 border-b border-border">
+                  <CardTitle className="text-sm flex items-center gap-2">
                     {info.icon}
-                    <span>{info.label}</span>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-
-            {categories.map((cat) => {
-              const info = CATEGORY_LABELS[cat] || { label: cat, icon: <Settings className="h-4 w-4" /> };
-              const catConfigs = groupedConfigs[cat];
-              return (
-                <TabsContent key={cat} value={cat} className="mt-3">
-                  <Card>
-                    <CardHeader className="px-4 py-3 border-b border-border">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        {info.icon}
-                        {info.label}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-4 py-1">
-                      {catConfigs.map((c) => renderConfigField(c, catConfigs))}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
+                    {info.label}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-4 py-1">
+                  {catConfigs.map((c) => renderConfigField(c, catConfigs))}
+                </CardContent>
+              </Card>
+            );
+          })}
 
           {/* Save All button at the bottom */}
           <Card>
