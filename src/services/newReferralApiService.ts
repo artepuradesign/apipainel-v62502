@@ -303,12 +303,12 @@ class NewReferralApiService {
   async getReferralBonusAmount(): Promise<number> {
     try {
       const value = await this.getConfigValue('referral_bonus_amount');
-      const bonusAmount = Number(value) || 3.00;
+      const bonusAmount = Number(value) || 5.00;
       console.log('💰 [NEW_REFERRAL_API] Valor do bônus obtido da API:', bonusAmount);
       return bonusAmount;
     } catch (error) {
       console.warn('⚠️ [NEW_REFERRAL_API] Usando valor padrão para referral_bonus_amount:', error);
-      return 3.00;
+      return 5.00;
     }
   }
 
@@ -337,7 +337,7 @@ class NewReferralApiService {
         referral_system_enabled: true,
         referral_bonus_enabled: true, // ✅ Bônus de cadastro mantido
         referral_commission_enabled: true,
-        referral_bonus_amount: 3.00, // Valor padrão caso API falhe
+        referral_bonus_amount: 5.00, // Valor padrão caso API falhe
         referral_commission_percentage: 10.0 // 10% adicional na ativação
       };
     }

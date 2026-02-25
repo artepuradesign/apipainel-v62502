@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '@/config/apiConfig';
 import { cookieUtils } from '@/utils/cookieUtils';
+import { bonusConfigService } from '@/services/bonusConfigService';
 
 export interface ReferralStats {
   total_indicados: number;
@@ -42,6 +43,9 @@ class ReferralApiService {
     try {
       console.log('🔍 [REFERRAL_API] Buscando dados de indicação da API externa...');
       
+      // Obter valor dinâmico do bônus da API
+      const dynamicBonusAmount = await bonusConfigService.getBonusAmount();
+      
       const response = await fetch(`${API_BASE_URL}/auth/referrals`, {
         method: 'GET',
         headers: this.getAuthHeaders()
@@ -64,8 +68,8 @@ class ReferralApiService {
             indicado_id: ref.referred_id || ref.indicado_id,
             codigo: ref.codigo,
             status: ref.status,
-            bonus_indicador: ref.comissao || ref.bonus_indicador || 3.00,
-            bonus_indicado: 3.00,
+            bonus_indicador: ref.comissao || ref.bonus_indicador || dynamicBonusAmount,
+            bonus_indicado: dynamicBonusAmount,
             first_login_bonus_processed: ref.first_login_bonus_processed || false,
             first_login_at: ref.first_login_at,
             created_at: ref.created_at,
@@ -76,7 +80,7 @@ class ReferralApiService {
           stats: {
             total_indicados: result.data.stats?.total_indicados || result.data.referrals?.length || 0,
             indicados_ativos: result.data.stats?.indicados_ativos || result.data.referrals?.filter((r: any) => r.first_login_bonus_processed).length || 0,
-            total_bonus: result.data.stats?.total_bonus || result.data.referrals?.reduce((sum: number, r: any) => sum + (r.first_login_bonus_processed ? (r.comissao || 3.00) : 0), 0) || 0,
+            total_bonus: result.data.stats?.total_bonus || result.data.referrals?.reduce((sum: number, r: any) => sum + (r.first_login_bonus_processed ? (r.comissao || dynamicBonusAmount) : 0), 0) || 0,
             bonus_este_mes: result.data.stats?.bonus_este_mes || 0
           }
         };
@@ -91,6 +95,7 @@ class ReferralApiService {
       
       // Tentar buscar dados do localStorage como fallback
       try {
+        const fallbackBonusAmount = await bonusConfigService.getBonusAmount();
         const currentUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
         const indicacoesData = JSON.parse(localStorage.getItem('indicacoes_data') || '[]');
         const usersData = JSON.parse(localStorage.getItem('system_users') || '[]');
@@ -110,8 +115,8 @@ class ReferralApiService {
                 indicado_id: indicacao.indicado_id,
                 codigo: indicacao.codigo,
                 status: indicacao.status,
-                bonus_indicador: parseFloat(indicacao.bonus_indicador || 3.00),
-                bonus_indicado: parseFloat(indicacao.bonus_indicado || 3.00),
+                bonus_indicador: parseFloat(indicacao.bonus_indicador || fallbackBonusAmount),
+                bonus_indicado: parseFloat(indicacao.bonus_indicado || fallbackBonusAmount),
                 first_login_bonus_processed: indicacao.first_login_bonus_processed || false,
                 first_login_at: indicacao.first_login_at,
                 created_at: indicacao.created_at,
