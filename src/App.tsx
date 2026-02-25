@@ -13,6 +13,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ScrollToTop from '@/components/ScrollToTop';
 import RequireSupportOrAdmin from '@/components/auth/RequireSupportOrAdmin';
 import SessionKickedModal from '@/components/notifications/SessionKickedModal';
+import MaintenanceGuard from '@/components/MaintenanceGuard';
 
 // Pages
 import Index from '@/pages/Index';
@@ -179,6 +180,7 @@ function App() {
                 <SessionKickedModal />
                 <SessionNotification />
                 <AuthWrapper>
+                  <MaintenanceGuard>
                   <div className="App">
                   <Routes>
                     {/* Public routes */}
@@ -354,6 +356,7 @@ function App() {
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                   </div>
+                  </MaintenanceGuard>
                 </AuthWrapper>
               </Router>
               <Toaster />
