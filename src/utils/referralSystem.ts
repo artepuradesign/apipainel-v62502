@@ -59,7 +59,7 @@ export const getReferralSystemConfig = async () => {
     
     // Configuração padrão mínima em caso de erro total
     const defaultConfig = {
-      bonusAmount: 3.00, // Valor padrão mais baixo
+      bonusAmount: 5.00, // Valor padrão do bonus.php
       commissionPercentage: 5,
       enabled: true,
       requireCpfActivation: true,
