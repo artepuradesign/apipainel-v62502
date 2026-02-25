@@ -197,7 +197,7 @@ const DashboardLayout = ({
               transition-all 
               duration-300 
               ease-in-out
-              ${isMobile ? 'p-2' : 'p-4 md:p-6'}
+              ${isMobile ? 'p-2' : 'p-3 md:p-4'}
               ${!isMobile && !collapsed ? 'ml-0' : ''}
             `}
           >
