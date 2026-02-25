@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { makeDirectRequest } from '@/config/apiConfig';
 import { externalReferralApiService } from '@/services/externalReferralApiService';
+import { useBonusConfig } from '@/services/bonusConfigService';
 
 import { toast } from 'sonner';
 
@@ -31,6 +32,7 @@ const OptionalReferralSection = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [hasVerified, setHasVerified] = useState(false);
+  const { bonusAmount, isLoading: isBonusLoading } = useBonusConfig();
 
   // Auto expandir quando necessário
   useEffect(() => {
@@ -152,7 +154,7 @@ const OptionalReferralSection = ({
               Tem um código de indicação?
             </h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-              Adicione o código para receber bônus especiais
+              {isBonusLoading ? 'Carregando...' : `Adicione o código e ganhe ${bonusAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} de bônus`}
             </p>
           </div>
           <Button

@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { cookieUtils } from '@/utils/cookieUtils';
 import { useReferralValidation } from '@/hooks/useReferralValidation';
 import { useReferralState } from '@/hooks/useReferralState';
+import { bonusConfigService } from '@/services/bonusConfigService';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -51,7 +52,11 @@ export const useRegistrationReferralLogic = () => {
         cookieUtils.set('referral_id', code, 7);
         
         if (fromUrl) {
-          toast(`Código de indicação válido! Você e ${validationResult.referrerName} ganharão bônus ao completar o cadastro!`, {
+          // Buscar valor do bônus da API
+          const bonusAmount = await bonusConfigService.getBonusAmount();
+          const formattedBonus = bonusAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          
+          toast(`Código de indicação válido! Você e ${validationResult.referrerName} ganharão ${formattedBonus} de bônus ao completar o cadastro!`, {
             action: {
               label: <X className="h-4 w-4" />,
               onClick: () => toast.dismiss(),
@@ -117,12 +122,16 @@ export const useRegistrationReferralLogic = () => {
       
       verifyReferralIdAuto(urlReferralCode, true);
       
-      toast("Convite de indicação recebido! Complete seu cadastro e receba bônus imediatamente no seu saldo do plano.", {
-        duration: 6000,
-        action: {
-          label: <X className="h-4 w-4" />,
-          onClick: () => toast.dismiss(),
-        },
+      // Buscar valor do bônus da API para o toast
+      bonusConfigService.getBonusAmount().then(bonusAmount => {
+        const formattedBonus = bonusAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        toast(`Convite de indicação recebido! Complete seu cadastro e receba ${formattedBonus} de bônus imediatamente no seu saldo do plano.`, {
+          duration: 6000,
+          action: {
+            label: <X className="h-4 w-4" />,
+            onClick: () => toast.dismiss(),
+          },
+        });
       });
     } else if (cookieReferral) {
       console.log('🍪 [REFERRAL] Recuperando código do cookie:', cookieReferral);
@@ -130,12 +139,15 @@ export const useRegistrationReferralLogic = () => {
       setShouldAutoExpand(true);
       verifyReferralIdAuto(cookieReferral, false);
       
-      toast("Código de indicação recuperado! Complete seu cadastro e receba bônus imediatamente no seu saldo do plano.", {
-        duration: 6000,
-        action: {
-          label: <X className="h-4 w-4" />,
-          onClick: () => toast.dismiss(),
-        },
+      bonusConfigService.getBonusAmount().then(bonusAmount => {
+        const formattedBonus = bonusAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        toast(`Código de indicação recuperado! Complete seu cadastro e receba ${formattedBonus} de bônus imediatamente no seu saldo do plano.`, {
+          duration: 6000,
+          action: {
+            label: <X className="h-4 w-4" />,
+            onClick: () => toast.dismiss(),
+          },
+        });
       });
     }
   }, [urlReferralCode]);
